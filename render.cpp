@@ -155,6 +155,7 @@ struct timeval _frameTimeStamp;
 Render::Render(const RenderParams *params) {
 	memset(_clut, 0, sizeof(_clut));
 	_aspectRatio = 1.;
+	_fov = 0;
 	_screenshotBuf = 0;
 	memset(&_overlay, 0, sizeof(_overlay));
 	_overlay.r = _overlay.g = _overlay.b = 255;
@@ -203,10 +204,11 @@ void Render::flushCachedTextures() {
 	_overlay.tex = 0;
 }
 
-void Render::resizeScreen(int w, int h, float *p) {
+void Render::resizeScreen(int w, int h, float *p, int fov) {
 	_w = w;
 	_h = h;
 	_aspectRatio = p[2] / p[3];
+	_fov = fov / 360.;
 #ifdef __SWITCH__
 	_viewport.w = h * 4 / 3;
 	_viewport.h = h;
@@ -629,7 +631,13 @@ void Render::setupProjection(int mode) {
 	case kProjGame:
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glFrustum(-.5, .5, -aspect / 2, 0., 1., 1024);
+		if (_fov != 0.) {
+			const float h = -tan(_fov * .5) * 7.5;
+			const float w = aspect * h / 2;
+			glFrustum(w, -w, h, 0, 1., 1024);
+		} else {
+			glFrustum(-.5, .5, -aspect / 2, 0., 1., 1024);
+		}
 		glTranslatef(0., 0., -16.);
 
 		glMatrixMode(GL_MODELVIEW);
