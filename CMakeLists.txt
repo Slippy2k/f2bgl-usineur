@@ -19,11 +19,11 @@ link_directories(
 )
 
 file(GLOB SRCS *.cpp)
-add_executable(${CMAKE_PROJECT_NAME}.elf
+add_executable(${CMAKE_PROJECT_NAME}
   ${SRCS}
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME}.elf
+target_link_libraries(${CMAKE_PROJECT_NAME}
   SDL2
   GLEW
   EGL
@@ -37,7 +37,7 @@ target_link_libraries(${CMAKE_PROJECT_NAME}.elf
 )
 
 add_custom_target(${CMAKE_PROJECT_NAME}.nro
-  DEPENDS ${CMAKE_PROJECT_NAME}.elf
+  DEPENDS ${CMAKE_PROJECT_NAME}
   COMMAND nacptool --create "Fade To Black" "usineur" "0.3.1" ${CMAKE_PROJECT_NAME}.nacp
   COMMAND elf2nro ${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.nro --icon=${CMAKE_SOURCE_DIR}/icon.jpg --nacp=${CMAKE_PROJECT_NAME}.nacp
 )
